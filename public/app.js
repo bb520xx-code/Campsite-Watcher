@@ -16,7 +16,7 @@ let mode = "any", picked = new Set(), tab = "activity";
 let selTypes = new Set(), selLoops = new Set();
 let details = {};                         // campsite id -> extra info from recreation.gov
 let detailRun = 0;
-const DETAIL_KEYS = ["accessible", "pets", "fire", "equip", "rigLen", "drive", "vehicles"];
+const DETAIL_KEYS = ["accessible", "pets", "fire", "equip", "rigLen", "drive", "vehicles", "water"];
 let log = store.get("log", []);
 let timer = null, nextAt = Date.now();
 
@@ -34,7 +34,7 @@ function readCfg() {
   for (const n of NEEDS) cfg[n] = $(n).checked;
   cfg.types = [...selTypes]; cfg.loops = [...selLoops];
   for (const k of ["accessible", "pets", "fire"]) cfg[k] = $(k).checked;
-  cfg.equip = $("equip").value; cfg.drive = $("drive").value;
+  cfg.equip = $("equip").value; cfg.drive = $("drive").value; cfg.water = $("water").value;
   cfg.rigLen = +$("rigLen").value || 0; cfg.vehicles = +$("vehicles").value || 0;
   return cfg;
 }
@@ -45,7 +45,7 @@ function writeCfg(c) {
   mode = c.mode; picked = new Set(c.picked);
   selTypes = new Set(c.types || []); selLoops = new Set(c.loops || []);
   for (const k of ["accessible", "pets", "fire"]) $(k).checked = !!c[k];
-  $("equip").value = c.equip || ""; $("drive").value = c.drive || "";
+  $("equip").value = c.equip || ""; $("drive").value = c.drive || ""; $("water").value = c.water || "";
   $("rigLen").value = c.rigLen || 0; $("vehicles").value = c.vehicles || 0;
   renderChips();
   document.querySelectorAll("[data-mode]").forEach(b => b.classList.toggle("on", b.dataset.mode === mode));
@@ -72,7 +72,7 @@ function eligible(s, c) {
   if (c.loops?.length && !c.loops.includes(s.loop)) return false;
   return true;
 }
-const hasDetailFilters = c => !!(c.accessible || c.pets || c.fire || c.equip || c.rigLen || c.drive || c.vehicles);
+const hasDetailFilters = c => !!(c.accessible || c.pets || c.fire || c.equip || c.rigLen || c.drive || c.vehicles || c.water);
 // Site details we haven't loaded yet count as a pass, so a filter never hides a possible opening.
 function detailOk(s, c) {
   const d = details[s.id];
@@ -80,6 +80,9 @@ function detailOk(s, c) {
   if (c.accessible && !d.acc) return false;
   if (c.pets && (!d.pets || /^(no|none)/i.test(d.pets))) return false;
   if (c.fire && d.fire && !/^y/i.test(d.fire)) return false;
+  if (c.water === "has" && !d.wa) return false;
+  if (c.water === "hookup" && !d.wh) return false;
+  if (c.water === "none" && d.wa) return false;
   if (c.drive && d.drive && d.drive.toLowerCase() !== c.drive.toLowerCase()) return false;
   if (c.vehicles && d.vehicles && d.vehicles < c.vehicles) return false;
   const eq = c.equip ? d.eq.find(e => e.n === c.equip) : null;

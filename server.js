@@ -9,10 +9,18 @@ const PUBLIC = path.join(__dirname, "public");
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
 
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+// recreation.gov answers 429 when asked too fast; wait and retry instead of failing.
 async function rec(pathAndQuery) {
-  const r = await fetch("https://www.recreation.gov" + pathAndQuery, { headers: { "User-Agent": UA, Accept: "application/json" } });
-  if (!r.ok) throw new Error(`recreation.gov returned ${r.status}`);
-  return r.json();
+  for (let attempt = 1; ; attempt++) {
+    const r = await fetch("https://www.recreation.gov" + pathAndQuery, { headers: { "User-Agent": UA, Accept: "application/json" } });
+    if (r.ok) return r.json();
+    if (r.status === 429 && attempt < 6) {
+      await sleep((+r.headers.get("retry-after") || 0) * 1000 || 700 * attempt);
+      continue;
+    }
+    throw new Error(r.status === 429 ? "recreation.gov is rate-limiting requests, try again in a minute" : `recreation.gov returned ${r.status}`);
+  }
 }
 
 // Per-campsite details (pets, ADA, equipment, vehicle length...). Rarely change, so cache them.
@@ -20,6 +28,8 @@ const detailCache = new Map();
 function normalize(c) {
   const attr = Object.fromEntries((c.attributes || []).map(a => [a.attribute_name, a.attribute_value]));
   const sd = c.site_details_map || {}, ed = c.equipment_details_map || {};
+  // wh = water hookup at the site; wa = any water listed for the site (hookup, spigot, drinking water)
+  const waterHookup = /^y/i.test(sd.water_hookup?.attribute_value || "") || (c.amenities || []).some(a => /water hookup/i.test(a.attribute_name));
   return {
     acc: !!c.is_accessible,
     pets: attr["Pets Allowed"] || "",
@@ -29,6 +39,7 @@ function normalize(c) {
     fire: sd.campfire_allowed?.attribute_value || "",
     eq: (c.permitted_equipment || []).filter(e => !e.is_deactivated).map(e => ({ n: e.equipment_name, max: e.max_length || 0 })),
     checkin: attr["Checkin Time"] || "", checkout: attr["Checkout Time"] || "",
+    wh: waterHookup, wa: waterHookup || (c.amenities || []).some(a => /drinking water|water spigot|water \(seasonal\)/i.test(a.attribute_name)),
   };
 }
 async function detail(id) {
@@ -39,7 +50,7 @@ async function detail(id) {
 }
 async function details(ids) {
   const out = {}, queue = [...ids];
-  await Promise.all(Array.from({ length: 8 }, async () => {
+  await Promise.all(Array.from({ length: 3 }, async () => {
     while (queue.length) { const id = queue.shift(); try { out[id] = await detail(id); } catch {} }
   }));
   return out;
