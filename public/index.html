@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campground Bot</title>
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg"><i></i><i></i><i></i><i></i></div>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><img src="icon.png" alt=""><span>Campground Bot</span></div>
+
+    <section>
+      <h3><em>1</em> Find a campground</h3>
+      <div class="glass">
+        <form id="searchForm" class="searchrow">
+          <input id="q" placeholder="Name, park, or recreation.gov link" autocomplete="off">
+          <button class="btn" id="searchBtn">Search</button>
+        </form>
+        <div id="results"></div>
+      </div>
+    </section>
+
+    <section>
+      <h3><em>★</em> Watching</h3>
+      <div class="glass" id="watchList"><div class="muted pad">Nothing yet. Search above.</div></div>
+    </section>
+
+    <section>
+      <h3><em>2</em> When are you going?</h3>
+      <div class="presets">
+        <button type="button" class="chip" data-preset="0">This weekend</button>
+        <button type="button" class="chip" data-preset="7">Next weekend</button>
+        <button type="button" class="chip" data-preset="30">In a month</button>
+      </div>
+      <div class="glass">
+        <div class="line"><span>Check-in</span><input type="date" id="checkin"></div>
+        <div class="line"><span>Check-out</span><input type="date" id="checkout"></div>
+        <div class="line"><span>My dates are flexible</span><label class="switch"><input type="checkbox" id="flex" checked><i></i></label></div>
+        <div class="line" id="nightsRow"><span>Nights in a row</span>
+          <div class="stepper"><button type="button" data-step="nights:-1">−</button><input type="number" id="nights" min="1" max="14" value="1"><button type="button" data-step="nights:1">+</button></div></div>
+      </div>
+      <div class="note" id="dateNote"></div>
+    </section>
+
+    <section>
+      <h3><em>3</em> What do you need?</h3>
+      <div class="glass">
+        <div class="line"><span>Electric hookup</span><label class="switch"><input type="checkbox" id="needElectric"><i></i></label></div>
+        <div class="line"><span>RV / camper site</span><label class="switch"><input type="checkbox" id="needRV"><i></i></label></div>
+        <div class="line"><span>Drive-up (no walk-in or boat-in)</span><label class="switch"><input type="checkbox" id="needDrive"><i></i></label></div>
+        <div class="line"><span>Skip group sites</span><label class="switch"><input type="checkbox" id="skipGroup"><i></i></label></div>
+        <div class="line"><span>Fits my group (people)</span>
+          <div class="stepper"><button type="button" data-step="groupSize:-1">−</button><input type="number" id="groupSize" min="0" max="99" value="0" title="0 = any size"><button type="button" data-step="groupSize:1">+</button></div></div>
+      </div>
+      <details class="glass more" id="more">
+        <summary>More options <span class="muted small">site type, pets, ADA, RV length…</span></summary>
+        <div class="optlabel">Site type</div><div class="chips" id="typeChips"><span class="muted small">Pick a campground to see its site types.</span></div>
+        <div class="optlabel" id="loopLabel">Loop / area</div><div class="chips" id="loopChips"></div>
+        <div class="line"><span>Accessible (ADA) sites only</span><label class="switch"><input type="checkbox" id="accessible"><i></i></label></div>
+        <div class="line"><span>Pets allowed</span><label class="switch"><input type="checkbox" id="pets"><i></i></label></div>
+        <div class="line"><span>Campfires allowed</span><label class="switch"><input type="checkbox" id="fire"><i></i></label></div>
+        <div class="line"><span>I'm bringing</span>
+          <select id="equip"><option value="">Anything</option><option>Tent</option><option>RV</option><option>Trailer</option><option>Caravan/Camper Van</option><option>Pickup Camper</option><option>Fifth Wheel</option><option>Pop up</option></select></div>
+        <div class="line"><span>My rig length (ft)</span>
+          <div class="stepper"><button type="button" data-step="rigLen:-5">−</button><input type="number" id="rigLen" min="0" max="100" value="0" title="0 = don't filter"><button type="button" data-step="rigLen:5">+</button></div></div>
+        <div class="line"><span>Driveway</span>
+          <select id="drive"><option value="">Any</option><option>Pull-Through</option><option>Back-In</option><option>Parallel</option></select></div>
+        <div class="line"><span>Vehicles to park</span>
+          <div class="stepper"><button type="button" data-step="vehicles:-1">−</button><input type="number" id="vehicles" min="0" max="10" value="0"><button type="button" data-step="vehicles:1">+</button></div></div>
+        <div class="note" id="detailNote"></div>
+      </details>
+    </section>
+
+    <section>
+      <h3><em>4</em> Alerts &amp; how often</h3>
+      <div class="glass">
+        <div class="line"><span>Check every</span>
+          <select id="interval">
+            <option value="30">30 seconds</option><option value="60">1 minute</option><option value="120" selected>2 minutes</option>
+            <option value="300">5 minutes</option><option value="600">10 minutes</option><option value="900">15 minutes</option><option value="1800">30 minutes</option>
+          </select></div>
+        <div class="warn" id="fastWarn" hidden>⚠️ <b>Heads up:</b> checking more than once a minute may get you temporarily blocked by recreation.gov. Use 1–2 minutes unless you really need it.</div>
+        <div class="line"><span>Send alerts to my phone</span><label class="switch"><input type="checkbox" id="phoneOn"><i></i></label></div>
+        <div class="line col"><span>Your private topic</span>
+          <div class="topicrow"><input id="topic" spellcheck="false"><button type="button" class="btn soft" id="newTopic" title="New random topic">↻</button></div></div>
+        <div class="line"><span class="muted small">1. Install the free <b>ntfy</b> app<br>2. Tap + and subscribe to the topic above</span><button type="button" class="btn soft" id="testPhone">Send test</button></div>
+      </div>
+      <div class="note" id="phoneNote"></div>
+    </section>
+
+    <div class="startbar">
+      <button id="startBtn" class="start" disabled>🔭 Start Watching</button>
+      <div class="note" id="startNote"></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbtns glass"><button id="refreshBtn" title="Check now">⟳</button><button id="bookBtn" title="Open on recreation.gov">🧭</button></div>
+
+    <div id="welcome" class="welcome">
+      <h1>Never miss a campsite.</h1>
+      <p>Pick a campground and your dates. Campground Bot checks recreation.gov <b class="everyText">every 2 minutes</b> and alerts you the moment a site opens up.</p>
+      <div class="how">
+        <div class="glass"><b>1 · Search</b><span>Find your campground on the left.</span></div>
+        <div class="glass"><b>2 · Set dates</b><span>Choose your dates and what you need.</span></div>
+        <div class="glass"><b>3 · Start watching</b><span>Get a notification, a sound and a text to your phone.</span></div>
+      </div>
+      <div class="optlabel">Popular places to try</div>
+      <div class="chips big">
+        <button class="chip" data-park="Yosemite">Yosemite</button><button class="chip" data-park="Yellowstone">Yellowstone</button>
+        <button class="chip" data-park="Zion">Zion</button><button class="chip" data-park="Grand Canyon">Grand Canyon</button>
+        <button class="chip" data-park="Glacier National Park">Glacier</button><button class="chip" data-park="Joshua Tree">Joshua Tree</button>
+        <button class="chip" data-park="Acadia">Acadia</button><button class="chip" data-park="Grand Teton">Grand Teton</button>
+        <button class="chip" data-park="Big Sur">Big Sur</button><button class="chip" data-park="Lake Tahoe">Lake Tahoe</button>
+      </div>
+    </div>
+
+    <div id="content" hidden>
+      <div class="headrow"><div><h1 id="cgName">Pick a campground</h1><div class="sub" id="cgSub"></div></div><div class="pill" id="statusPill">Not watching</div></div>
+      <button id="nearby" class="btn soft nearby" style="display:none"></button>
+
+      <div class="glass filters">
+        <div class="seg"><button data-mode="any" class="on">Any site</button><button data-mode="pick">Only sites I pick</button></div>
+        <input id="siteFilter" placeholder="Find a site, loop or type">
+        <label class="chk"><input type="checkbox" id="openNight"> Only sites with an open night</label>
+        <label class="chk"><input type="checkbox" id="openFirst" checked> Open sites first</label>
+        <label class="chk"><input type="checkbox" id="fitOnly" checked> Only sites that fit my needs</label>
+        <div class="legend">
+          <span><i class="sw s-avail"></i>Available</span><span><i class="sw s-booked"></i>Booked</span>
+          <span><i class="sw s-nyr"></i>Not released yet</span><span><i class="sw s-walk"></i>Walk-up only</span>
+          <span><i class="sw s-na"></i>Unavailable</span>
+        </div>
+      </div>
+
+      <div class="glass gridwrap"><table id="grid"><thead></thead><tbody></tbody></table></div>
+
+      <div class="glass logs">
+        <div class="seg"><button data-tab="activity" class="on">Activity</button><button data-tab="found">Openings Found</button></div>
+        <div id="log" class="logbody muted">Nothing yet. Checks and alerts will show up here.</div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
