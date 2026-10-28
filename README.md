@@ -24,3 +24,22 @@ Then open http://localhost:3000. Or run `npm install && npm run app` for the des
 
 - recreation.gov doesn't allow calls straight from a web page, so `server.js` runs locally and relays requests to it. That's why this can't be hosted on GitHub Pages alone.
 - Uses recreation.gov's unofficial website API, which may change. The bot only reads availability; you book on recreation.gov yourself.
+
+## Website version (no download)
+
+The app can also run as a website that anyone opens in a browser. It needs a small always-on server (recreation.gov blocks pages from calling it directly), so it can't live on GitHub Pages. This repo includes a ready config for [Render](https://render.com)'s free plan:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/bb520xx-code/campground-bot)
+
+1. Click the button and sign in to Render (connect GitHub when asked).
+2. Accept the defaults and click **Apply**. A minute later you get a link like `https://campground-bot-xxxx.onrender.com`.
+3. Share that link.
+
+How the website version differs from the Mac app:
+
+- **Watching only happens while the page is open in a browser tab.** Close the tab and checks stop (the Mac app keeps checking in the background). Phone alerts, if enabled, still arrive on your phone while the tab is open.
+- Each visitor's watches and phone topic are saved only in their own browser. Nothing is shared between visitors.
+- Phone alerts go straight from the visitor's browser to ntfy.sh, never through the server.
+- All visitors share one server, so heavy use can make recreation.gov rate-limit it. The server limits each visitor to 240 requests a minute (`RATE_LIMIT` to change).
+- Render's free plan sleeps after 15 minutes without visits, so the first load can take about 30 seconds.
+- Hosting from a data-center address is not guaranteed to be accepted by recreation.gov. If searches fail on the hosted site but work on your computer, that's why.

@@ -247,8 +247,12 @@ let phone = store.get("phone", { on: false, topic: newTopic() });
 const savePhone = () => store.set("phone", phone);
 async function pushPhone(title, message, click) {
   if (!phone.on) return;
-  try { await fetch("/api/notify", { method: "POST", body: JSON.stringify({ topic: phone.topic, title, message, click }) }).then(async r => { if (!r.ok) throw new Error((await r.json()).error); }); }
-  catch (e) { addLog(`Phone alert failed: ${e.message}`); }
+  if (!/^[A-Za-z0-9_-]{6,64}$/.test(phone.topic)) return addLog("Phone alert not sent: the topic must be 6-64 letters, numbers, - or _.");
+  try {
+    // Straight from your browser to ntfy.sh, so no server of ours ever sees your topic.
+    const r = await fetch("https://ntfy.sh/", { method: "POST", body: JSON.stringify({ topic: phone.topic, title, message, priority: 5, tags: ["tent"], click }) });
+    if (!r.ok) throw new Error(`ntfy.sh returned ${r.status}`);
+  } catch (e) { addLog(`Phone alert failed: ${e.message}`); }
 }
 function renderPhone() {
   $("phoneOn").checked = phone.on; $("topic").value = phone.topic;

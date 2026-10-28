@@ -100,29 +100,22 @@ async function handleApi(url, res) {
   json(res, 404, { error: "not found" });
 }
 
-// Phone alerts: relay to ntfy.sh, which pushes to the ntfy app on your phone.
-async function handleNotify(req, res) {
-  let body = "";
-  for await (const chunk of req) { body += chunk; if (body.length > 10000) return json(res, 413, { error: "too large" }); }
-  const { topic, title, message, click } = JSON.parse(body || "{}");
-  if (!/^[A-Za-z0-9_-]{6,64}$/.test(topic || "")) return json(res, 400, { error: "Topic must be 6-64 letters, numbers, - or _" });
-  const r = await fetch("https://ntfy.sh/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ topic, title: String(title || "Campground Bot").slice(0, 200), message: String(message || "").slice(0, 1000),
-      click: /^https:\/\/www\.recreation\.gov\//.test(click || "") ? click : undefined, priority: 5, tags: ["tent"] }),
-  });
-  if (!r.ok) throw new Error(`ntfy.sh returned ${r.status}`);
-  json(res, 200, { ok: true });
+// Simple per-visitor rate limit so one shared server can't be hammered (or used to hammer recreation.gov).
+const hits = new Map();
+const LIMIT = +process.env.RATE_LIMIT || 240; // requests per minute per visitor
+setInterval(() => hits.clear(), 60 * 1000).unref();
+function limited(req) {
+  const who = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.socket.remoteAddress;
+  const n = (hits.get(who) || 0) + 1;
+  hits.set(who, n);
+  return n > LIMIT;
 }
 
 http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://localhost");
-  if (url.pathname === "/api/notify" && req.method === "POST") {
-    try { await handleNotify(req, res); } catch (e) { json(res, 502, { error: e.message }); }
-    return;
-  }
+  if (url.pathname === "/healthz") return json(res, 200, { ok: true });
   if (url.pathname.startsWith("/api/")) {
+    if (limited(req)) return json(res, 429, { error: "Too many requests, slow down a little." });
     try { await handleApi(url, res); } catch (e) { json(res, 502, { error: e.message }); }
     return;
   }
@@ -133,4 +126,5 @@ http.createServer(async (req, res) => {
     res.writeHead(200, { "Content-Type": TYPES[path.extname(file)] || "application/octet-stream" });
     res.end(data);
   });
-}).listen(PORT, () => console.log(`Campground Bot running at http://localhost:${PORT}`));
+// Local-only by default (the Mac app and `npm start`). A hosted deploy sets HOST=0.0.0.0.
+}).listen(PORT, process.env.HOST || "127.0.0.1", () => console.log(`Campground Bot running at http://localhost:${PORT}`));

@@ -1,0 +1,12 @@
+# One-click deploy for the website version: https://render.com/deploy?repo=https://github.com/bb520xx-code/campground-bot
+services:
+  - type: web
+    name: campground-bot
+    runtime: node
+    plan: free
+    buildCommand: echo "no dependencies to install"   # server.js uses only Node built-ins
+    startCommand: node server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
