@@ -412,7 +412,7 @@ $("topic").onchange = () => { phone.topic = $("topic").value.trim(); savePhone()
 $("newTopic").onclick = () => { phone.topic = newTopic(); savePhone(); renderPhone(); };
 $("testPhone").onclick = async () => {
   const was = phone.on; phone.on = true;
-  await pushPhone("Campground Bot test", "Phone alerts are working. You'll get a message like this when a site opens.");
+  await pushPhone("Campsite Watcher test", "Phone alerts are working. You'll get a message like this when a site opens.");
   phone.on = was; addLog("Sent a test alert to your phone.");
 };
 

@@ -127,4 +127,4 @@ http.createServer(async (req, res) => {
     res.end(data);
   });
 // Local-only by default (the Mac app and `npm start`). A hosted deploy sets HOST=0.0.0.0.
-}).listen(PORT, process.env.HOST || "127.0.0.1", () => console.log(`Campground Bot running at http://localhost:${PORT}`));
+}).listen(PORT, process.env.HOST || "127.0.0.1", () => console.log(`Campsite Watcher running at http://localhost:${PORT}`));

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "app": "electron .",
-    "build": "electron-packager . CampgroundBot --platform=darwin --arch=arm64 --out=dist --icon=icon.icns --overwrite --prune=true --ignore=\"^/dist\" --ignore=\"^/README.md\""
+    "build": "electron-packager . \"Campsite Watcher\" --platform=darwin --arch=arm64 --out=dist --icon=icon.icns --overwrite --prune=true --ignore=\"^/dist\" --ignore=\"^/README.md\""
   },
   "engines": {
     "node": ">=18"

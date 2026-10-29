@@ -14,7 +14,7 @@ let win;
 function createWindow() {
   win = new BrowserWindow({
     width: 1280, height: 860, minWidth: 900, minHeight: 600,
-    title: "Campground Bot", titleBarStyle: "hiddenInset",
+    title: "Campsite Watcher", titleBarStyle: "hiddenInset",
     backgroundColor: "#dcebf7", icon: path.join(__dirname, "icon.png"),
   });
   win.loadURL(`http://localhost:${PORT}`);
