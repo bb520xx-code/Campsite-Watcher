@@ -38,6 +38,11 @@ Keep **My dates are flexible** on to be alerted for any night in your range, or 
 
 ![Dates and campsite grid](docs/3-pick-dates-and-see-sites.jpg)
 
+### Nothing open? Check the rest of the park
+Press **Check other campgrounds in …** in the Suggestions box. It looks up the park's other campgrounds, checks them for your dates and needs (and up to 3 days either side), and shows what's open in green. Tap **Watch** to switch to one, or **Book** to open recreation.gov.
+
+![Suggestions](docs/3b-other-campgrounds.jpg)
+
 ### 4. Say what you need
 Under **What do you need?**, switch on what matters: electric hookup, RV site, water, group size and more. Open **More options** for site type, pets, wheelchair access, campfires, rig length and driveway type. The grid updates as you go.
 
