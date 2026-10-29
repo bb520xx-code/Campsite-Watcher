@@ -229,8 +229,9 @@ async function select(id) {
   $("welcome").hidden = true; $("content").hidden = false;
   $("cgName").textContent = k.name;
   $("cgSub").textContent = (k.parent ? k.parent + " · " : "") + (watches[id] ? "Watching. You'll be alerted when a site opens." : "Alerts for any open site here.");
-  $("nearby").style.display = k.parent ? "" : "none";
+  $("sugg").style.display = k.parent ? "" : "none";
   $("nearby").textContent = `Check other campgrounds in ${k.parent}`;
+  $("suggBody").textContent = "Find open campsites at other campgrounds in this park, for your dates and needs.";
   if (watches[id]) writeCfg(watches[id].cfg);
   renderWatch();
   await refresh();
@@ -375,7 +376,64 @@ $("startBtn").onclick = async () => {
   }
   store.set("watches", watches); ensureTimer(); renderWatch(); renderPill();
 };
-$("nearby").onclick = () => { $("q").value = known[selected].parent; $("searchForm").requestSubmit(); };
+// ---------- suggestions: other campgrounds in the same park ----------
+const esc = t => String(t).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+const fmtDay = d => parse(d).toLocaleDateString("en", { month: "short", day: "numeric" });
+let suggMap = {};
+function suggCards(rs) {
+  const rank = r => r.hit ? (r.hit.shift === 0 ? 0 : 1) : r.error ? 3 : 2;
+  const sorted = [...rs].sort((a, b) => rank(a) - rank(b) || (b.hit?.found.length || 0) - (a.hit?.found.length || 0));
+  return `<div class="scards">` + sorted.map(r => {
+    suggMap[r.id] = r;
+    const h = r.hit;
+    const text = h
+      ? `${h.found.length} site${h.found.length > 1 ? "s" : ""} open ${fmtDay(h.cc.checkin)} – ${fmtDay(h.cc.checkout)}` +
+        (h.shift ? ` · ${Math.abs(h.shift)} day${Math.abs(h.shift) > 1 ? "s" : ""} ${h.shift < 0 ? "earlier" : "later"}` : " · your dates")
+      : r.error ? "Couldn't check right now" : "Nothing open within 3 days of your dates";
+    return `<div class="scard ${h ? "hit-now" : ""}"><div><b>${esc(r.name)}</b><small>${esc(text)}</small></div>
+      <div class="sact"><button type="button" class="btn soft" data-watch="${r.id}">Watch</button>
+      <a class="btn soft" target="_blank" href="https://www.recreation.gov/camping/campgrounds/${r.id}">Book</a></div></div>`;
+  }).join("") + `</div>`;
+}
+async function scanSiblings() {
+  const k = known[selected]; if (!k?.parent) return;
+  const c0 = readCfg(), myId = selected, body = $("suggBody"), btn = $("nearby");
+  if (c0.checkout <= c0.checkin) { body.textContent = "Pick check-in and check-out dates first."; return; }
+  btn.disabled = true; body.textContent = `Looking up campgrounds in ${k.parent}…`;
+  try {
+    const all = await api(`/api/search?q=${encodeURIComponent(k.parent)}&size=40`);
+    const sibs = all.filter(r => r.parent === k.parent && r.id !== myId);
+    if (!sibs.length) { body.textContent = "No other campgrounds found in this park."; return; }
+    // The picked sites / types / loops belong to the current campground, so leave them out here.
+    const c = { ...c0, mode: "any", types: [], loops: [], picked: [] };
+    const done = [];
+    for (let i = 0; i < sibs.length; i++) {
+      if (selected !== myId) return;                         // user moved to another campground
+      body.innerHTML = `<div>Checking ${i + 1} of ${sibs.length}: ${esc(sibs[i].name)}…</div>` + suggCards(done);
+      const s = sibs[i];
+      try {
+        const list = await fetchSites(s.id, { checkin: addDays(c.checkin, -3), checkout: addDays(c.checkout, 3) });
+        let hit = null;
+        for (const shift of [0, -1, 1, -2, 2, -3, 3]) {      // your dates first, then up to 3 days either side
+          const cc = { ...c, checkin: addDays(c.checkin, shift), checkout: addDays(c.checkout, shift) };
+          const found = await findMatches(list, cc);
+          if (found.length) { hit = { shift, cc, found }; break; }
+        }
+        done.push({ ...s, hit });
+      } catch (e) { done.push({ ...s, error: e.message }); }
+    }
+    const open = done.filter(r => r.hit).length;
+    body.innerHTML = `<div>${open ? `${open} of ${done.length} other campgrounds have something open.` : `Nothing open at the ${done.length} other campgrounds for your dates, or within 3 days of them, right now.`}</div>` + suggCards(done);
+  } catch (e) { body.textContent = `Couldn't check other campgrounds: ${e.message}`; }
+  finally { btn.disabled = false; }
+}
+$("nearby").onclick = scanSiblings;
+$("suggBody").onclick = e => {
+  const id = e.target.closest("[data-watch]")?.dataset.watch; if (!id) return;
+  const r = suggMap[id];
+  known[id] = { id, name: r.name, parent: r.parent };
+  store.set("known", known); select(id);
+};
 $("refreshBtn").onclick = () => selected && (watches[selected] ? checkOne(watches[selected]) : refresh());
 $("bookBtn").onclick = () => selected && window.open(`https://www.recreation.gov/camping/campgrounds/${selected}`, "_blank");
 $("grid").onchange = e => {

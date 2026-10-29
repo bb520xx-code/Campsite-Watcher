@@ -71,7 +71,7 @@ async function handleApi(url, res) {
       const d = (await rec(`/api/camps/campgrounds/${id}`)).campground;
       return json(res, 200, [{ id, name: d.facility_name, parent: d.parent_name || "", state: d.addresses?.[0]?.state_code || "" }]);
     }
-    const d = await rec(`/api/search?q=${encodeURIComponent(text)}&entity_type=campground&size=12`);
+    const d = await rec(`/api/search?q=${encodeURIComponent(text)}&entity_type=campground&size=${Math.min(+q.get("size") || 12, 40)}`);
     const out = (d.results || [])
       .filter(r => r.entity_type === "campground")
       .map(r => ({ id: r.entity_id, name: r.name, parent: r.parent_name || "", state: r.state_code || "" }));

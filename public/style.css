@@ -150,3 +150,15 @@ td input[type=checkbox] { width:16px; height:16px; accent-color:var(--blue); }
 .warn { margin:6px 12px; padding:10px 12px; border-radius:14px; font-size:12.5px; line-height:1.4;
   background:linear-gradient(145deg,rgba(255,176,32,.35),rgba(255,176,32,.16)); border:1px solid rgba(255,176,32,.6); }
 .warn[hidden] { display:none; }
+.sugg { padding:14px 16px; }
+.suggHead { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+.suggHead .btn { padding:7px 14px; }
+#suggBody { margin-top:8px; }
+.scards { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; margin-top:10px; }
+.scard { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 14px; border-radius:18px; color:var(--text);
+  background:linear-gradient(145deg,var(--glass-a),var(--glass-b)); border:1px solid var(--edge-dim); box-shadow:inset 0 1px 0 var(--edge); }
+.scard.hit-now { border-color:rgba(31,180,85,.6); background:linear-gradient(145deg,rgba(31,180,85,.28),rgba(31,180,85,.10)); }
+.scard small { display:block; color:var(--muted); font-size:12px; margin-top:2px; }
+.scard.hit-now small { color:inherit; }
+.sact { display:flex; gap:6px; flex:none; } .sact .btn { padding:6px 12px; font-size:12.5px; text-decoration:none; color:var(--text); }
+.scards { max-height:330px; overflow-y:auto; padding-right:4px; }

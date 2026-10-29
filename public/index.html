@@ -123,7 +123,10 @@
 
     <div id="content" hidden>
       <div class="headrow"><div><h1 id="cgName">Pick a campground</h1><div class="sub" id="cgSub"></div></div><div class="pill" id="statusPill">Not watching</div></div>
-      <button id="nearby" class="btn soft nearby" style="display:none"></button>
+      <div class="glass sugg" id="sugg" style="display:none">
+        <div class="suggHead"><b>✨ Suggestions</b><button type="button" id="nearby" class="btn soft"></button></div>
+        <div id="suggBody" class="muted small"></div>
+      </div>
 
       <div class="glass filters">
         <div class="seg"><button data-mode="any" class="on">Any site</button><button data-mode="pick">Only sites I pick</button></div>
