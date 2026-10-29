@@ -1,6 +1,6 @@
-# Campground Bot
+# Campsite Watcher
 
-**No download? Use the website version:** [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/bb520xx-code/campground-bot) (details [below](#website-version-no-download))
+**No download? Use the website version:** [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/bb520xx-code/Campsite-Watcher) (details [below](#website-version-no-download))
 
 Watches a [recreation.gov](https://www.recreation.gov) campground and alerts you (notification, sound, and the booking page opening) when a site opens up for your dates.
 
@@ -31,10 +31,10 @@ Then open http://localhost:3000. Or run `npm install && npm run app` for the des
 
 The app can also run as a website that anyone opens in a browser. It needs a small always-on server (recreation.gov blocks pages from calling it directly), so it can't live on GitHub Pages. This repo includes a ready config for [Render](https://render.com)'s free plan:
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/bb520xx-code/campground-bot)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/bb520xx-code/Campsite-Watcher)
 
 1. Click the button and sign in to Render (connect GitHub when asked).
-2. Accept the defaults and click **Apply**. A minute later you get a link like `https://campground-bot-xxxx.onrender.com`.
+2. Accept the defaults and click **Apply**. A minute later you get a link like `https://campsite-watcher-xxxx.onrender.com`.
 3. Share that link.
 
 How the website version differs from the Mac app:

@@ -1,7 +1,7 @@
-# One-click deploy for the website version: https://render.com/deploy?repo=https://github.com/bb520xx-code/campground-bot
+# One-click deploy for the website version: https://render.com/deploy?repo=https://github.com/bb520xx-code/Campsite-Watcher
 services:
   - type: web
-    name: campground-bot
+    name: campsite-watcher
     runtime: node
     plan: free
     buildCommand: echo "no dependencies to install"   # server.js uses only Node built-ins
