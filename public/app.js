@@ -229,6 +229,8 @@ async function select(id) {
   $("welcome").hidden = true; $("content").hidden = false;
   $("cgName").textContent = k.name;
   $("cgSub").textContent = (k.parent ? k.parent + " · " : "") + (watches[id] ? "Watching. You'll be alerted when a site opens." : "Alerts for any open site here.");
+  scanRun++;                                             // stop any scan left over from the previous campground
+  $("nearby").disabled = false;
   $("sugg").style.display = k.parent ? "" : "none";
   $("nearby").textContent = `Check other campgrounds in ${k.parent}`;
   $("suggBody").textContent = "Find open campsites at other campgrounds in this park, for your dates and needs.";
@@ -380,6 +382,7 @@ $("startBtn").onclick = async () => {
 const esc = t => String(t).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 const fmtDay = d => parse(d).toLocaleDateString("en", { month: "short", day: "numeric" });
 let suggMap = {};
+let scanRun = 0;                                         // bumps to cancel a running suggestions scan
 function suggCards(rs) {
   const rank = r => r.hit ? (r.hit.shift === 0 ? 0 : 1) : r.error ? 3 : 2;
   const sorted = [...rs].sort((a, b) => rank(a) - rank(b) || (b.hit?.found.length || 0) - (a.hit?.found.length || 0));
@@ -397,7 +400,7 @@ function suggCards(rs) {
 }
 async function scanSiblings() {
   const k = known[selected]; if (!k?.parent) return;
-  const c0 = readCfg(), myId = selected, body = $("suggBody"), btn = $("nearby");
+  const c0 = readCfg(), myId = selected, myRun = ++scanRun, body = $("suggBody"), btn = $("nearby");
   if (c0.checkout <= c0.checkin) { body.textContent = "Pick check-in and check-out dates first."; return; }
   btn.disabled = true; body.textContent = `Looking up campgrounds in ${k.parent}…`;
   try {
@@ -408,7 +411,7 @@ async function scanSiblings() {
     const c = { ...c0, mode: "any", types: [], loops: [], picked: [] };
     const done = [];
     for (let i = 0; i < sibs.length; i++) {
-      if (selected !== myId) return;                         // user moved to another campground
+      if (selected !== myId || scanRun !== myRun) return;   // moved on, or closed the panel
       body.innerHTML = `<div>Checking ${i + 1} of ${sibs.length}: ${esc(sibs[i].name)}…</div>` + suggCards(done);
       const s = sibs[i];
       try {
@@ -422,12 +425,14 @@ async function scanSiblings() {
         done.push({ ...s, hit });
       } catch (e) { done.push({ ...s, error: e.message }); }
     }
+    if (scanRun !== myRun) return;
     const open = done.filter(r => r.hit).length;
     body.innerHTML = `<div>${open ? `${open} of ${done.length} other campgrounds have something open.` : `Nothing open at the ${done.length} other campgrounds for your dates, or within 3 days of them, right now.`}</div>` + suggCards(done);
   } catch (e) { body.textContent = `Couldn't check other campgrounds: ${e.message}`; }
-  finally { btn.disabled = false; }
+  finally { if (scanRun === myRun) btn.disabled = false; }
 }
 $("nearby").onclick = scanSiblings;
+$("suggClose").onclick = () => { scanRun++; $("sugg").style.display = "none"; $("nearby").disabled = false; };
 $("suggBody").onclick = e => {
   const id = e.target.closest("[data-watch]")?.dataset.watch; if (!id) return;
   const r = suggMap[id];
