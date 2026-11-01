@@ -4,7 +4,9 @@
 
 Also on Hugging Face: https://huggingface.co/spaces/bb520xx-code/Campsite-Watcher
 
-Prefer your own copy? [Run it on your computer](#run) or [deploy your own website](#website-version-no-download).
+**Download the app:** [Windows](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Windows.zip) · [Mac (Apple chip)](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Mac.zip). See [Desktop app](#desktop-app) for how to open it the first time.
+
+Prefer to build it yourself? [Run it on your computer](#run) or [deploy your own website](#website-version-no-download).
 
 
 Watches a [recreation.gov](https://www.recreation.gov) campground and alerts you (notification, sound, and the booking page opening) when a site opens up for your dates.
@@ -62,6 +64,22 @@ Press the green **Start Watching** button. The label at the top turns green and 
 
 ![Watching](docs/6-start-watching.jpg)
 
+## Desktop app
+
+The desktop app keeps checking even after you close its window, so you don't need a browser tab open.
+
+**Windows (10 or 11, 64-bit)**
+1. Download [Campsite-Watcher-Windows.zip](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Windows.zip), right-click it and choose **Extract All**.
+2. Open the extracted **Campsite Watcher** folder and double-click **Campsite Watcher.exe**.
+3. The app isn't signed, so Windows shows "Windows protected your PC" the first time. Click **More info**, then **Run anyway**.
+4. Closing the window keeps it watching from the tent icon by the clock (it may be under the **^** arrow). Right-click the icon to open it again or **Quit**.
+
+**Mac (Apple chip: M1 or newer)**
+1. Download [Campsite-Watcher-Mac.zip](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Mac.zip) and double-click it to unzip.
+2. Drag **Campsite Watcher** into **Applications** and open it.
+3. The app isn't from the App Store, so macOS blocks it the first time. Go to **System Settings → Privacy & Security**, scroll down and click **Open Anyway**.
+4. Closing the window keeps it watching. Click its Dock icon to bring it back, and quit with **Cmd+Q**.
+
 ## Run
 
 Requires [Node.js](https://nodejs.org) 18 or newer. No dependencies to install.
@@ -70,7 +88,7 @@ Requires [Node.js](https://nodejs.org) 18 or newer. No dependencies to install.
 npm start
 ```
 
-Then open http://localhost:3000. Or run `npm install && npm run app` for the desktop window, and `npm run build` to make a Mac app. Keep the tab open while watching; allow notifications when asked.
+Then open http://localhost:3000. Or run `npm install && npm run app` for the desktop window, `npm run build` to make the Mac app, and `npm run build:win` for the Windows app. Keep the tab open while watching; allow notifications when asked.
 
 ## Notes
 
@@ -89,7 +107,7 @@ The app can also run as a website that anyone opens in a browser. It needs a sma
 
 How the website version differs from the Mac app:
 
-- **Watching only happens while the page is open in a browser tab.** Close the tab and checks stop (the Mac app keeps checking in the background). Phone alerts, if enabled, still arrive on your phone while the tab is open.
+- **Watching only happens while the page is open in a browser tab.** Close the tab and checks stop (the desktop app keeps checking in the background). Phone alerts, if enabled, still arrive on your phone while the tab is open.
 - Each visitor's watches and phone topic are saved only in their own browser. Nothing is shared between visitors.
 - Phone alerts go straight from the visitor's browser to ntfy.sh, never through the server.
 - All visitors share one server, so heavy use can make recreation.gov rate-limit it. The server limits each visitor to 240 requests a minute (`RATE_LIMIT` to change).

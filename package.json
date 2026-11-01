@@ -1,12 +1,13 @@
 {
   "name": "campground-bot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Watches recreation.gov campgrounds and alerts you when a site opens up.",
   "main": "main.js",
   "scripts": {
     "start": "node server.js",
     "app": "electron .",
-    "build": "electron-packager . \"Campsite Watcher\" --platform=darwin --arch=arm64 --out=dist --icon=icon.icns --overwrite --prune=true --ignore=\"^/dist\" --ignore=\"^/README.md\""
+    "build": "electron-packager . \"Campsite Watcher\" --out=dist --overwrite --prune=true --platform=darwin --arch=arm64 --icon=icon.icns --ignore=\"^/(dist|docs|README\\\\.md|render\\\\.yaml|icon\\\\.icns|icon\\\\.ico|\\\\.gitignore)($|/)\" --ignore=\"\\\\.app($|/)\"",
+    "build:win": "electron-packager . \"Campsite Watcher\" --out=dist --overwrite --prune=true --platform=win32 --arch=x64 --icon=icon.ico --win32metadata.ProductName=\"Campsite Watcher\" --win32metadata.FileDescription=\"Campsite Watcher\" --ignore=\"^/(dist|docs|README\\\\.md|render\\\\.yaml|icon\\\\.icns|icon\\\\.ico|\\\\.gitignore)($|/)\" --ignore=\"\\\\.app($|/)\""
   },
   "engines": {
     "node": ">=18"
