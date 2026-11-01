@@ -2,6 +2,8 @@
 
 **Use it in your browser, no download: https://campsite-watcher-vs4b.onrender.com**
 
+Also on Hugging Face: https://huggingface.co/spaces/bb520xx-code/Campsite-Watcher
+
 Prefer your own copy? [Run it on your computer](#run) or [deploy your own website](#website-version-no-download).
 
 
