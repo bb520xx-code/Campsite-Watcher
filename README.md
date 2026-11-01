@@ -4,7 +4,14 @@
 
 Also on Hugging Face: https://huggingface.co/spaces/bb520xx-code/Campsite-Watcher
 
-**Download the app:** [Windows](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Windows.zip) · [Mac (Apple chip)](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Mac.zip). See [Desktop app](#desktop-app) for how to open it the first time.
+## Download
+
+| 🪟 Windows | 🍎 Mac |
+|:---:|:---:|
+| [**⬇ Download for Windows**](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Windows.zip) | [**⬇ Download for Mac**](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Mac.zip) |
+| Windows 10 or 11, 64-bit | Apple chip (M1 or newer) |
+
+First time opening it? See [Desktop app](#desktop-app).
 
 Prefer to build it yourself? [Run it on your computer](#run) or [deploy your own website](#website-version-no-download).
 
