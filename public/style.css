@@ -179,3 +179,21 @@ td input[type=checkbox] { width:16px; height:16px; accent-color:var(--blue); }
 .scard.hit-now small { color:inherit; }
 .sact { display:flex; gap:6px; flex:none; } .sact .btn { padding:6px 12px; font-size:12.5px; text-decoration:none; color:var(--text); }
 .scards { max-height:330px; overflow-y:auto; padding-right:4px; }
+
+/* Phones and narrow windows: two tabs (Set up / Campsites) instead of one long page */
+.tabbar { display:none; }
+@media (max-width:900px) {
+  .app.pane-side .main, .app.pane-main .side { display:none; }
+  .side { overflow:visible; }   /* lets the Start button stick above the tab bar */
+  .side { padding-top:max(24px, calc(env(safe-area-inset-top) + 12px)); padding-bottom:0; }
+  .main { padding-top:max(24px, calc(env(safe-area-inset-top) + 12px)); padding-bottom:calc(88px + env(safe-area-inset-bottom)); }
+  .startbar { bottom:0; padding-bottom:calc(78px + env(safe-area-inset-bottom)); }   /* its backdrop runs behind the tab bar */
+  .tabbar { display:flex; gap:4px; position:fixed; z-index:20; left:max(12px, env(safe-area-inset-left)); right:max(12px, env(safe-area-inset-right));
+    bottom:calc(10px + env(safe-area-inset-bottom)); max-width:480px; margin:0 auto; padding:5px; border-radius:999px; }
+  .tabbar button { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:11px 10px; border:0; border-radius:999px;
+    background:none; color:var(--text); font-size:15px; font-weight:600; cursor:pointer; }
+  .tabbar button.on { background:var(--blue); color:#fff; box-shadow:inset 0 1px 0 rgba(255,255,255,.35); }
+  .tabbar em { font-style:normal; font-size:12px; font-weight:700; padding:2px 7px; border-radius:999px; background:var(--green); color:#fff; white-space:nowrap; }
+  .tabbar em.none { background:rgba(120,130,140,.35); color:inherit; }
+  .tabbar em[hidden] { display:none; }
+}

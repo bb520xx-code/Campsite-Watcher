@@ -173,6 +173,15 @@ function renderGrid() {
     `<td>${s.type.toLowerCase().replace(/\b\w/g, m => m.toUpperCase())}</td>` +
     nights.map(n => `<td class="c"><span class="cell ${cls(s.days[n])}" title="${s.days[n] || "No info"}"></span></td>`).join("") + `</tr>`).join("")
     || `<tr><td class="muted pad" colspan="9">No sites to show.</td></tr>`;
+  renderBadge();
+}
+// Phone tabs: show how many sites are open (and fit your needs) on the Campsites tab.
+function renderBadge() {
+  const b = $("openBadge"); if (!b) return;
+  if (!selected || !sites.length) { b.hidden = true; return; }
+  const c = readCfg(), nights = nightsList(c.checkin, c.checkout);
+  const n = sites.filter(s => nights.some(d => s.days[d] === "Available") && eligible(s, { ...c, mode: "any" }) && detailOk(s, c)).length;
+  b.hidden = false; b.textContent = `${n} open`; b.classList.toggle("none", !n);
 }
 function renderChips() {
   const count = key => sites.reduce((m, s) => (m[s[key]] = (m[s[key]] || 0) + 1, m), {});
@@ -461,6 +470,19 @@ document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
   syncWatch();
   document.querySelectorAll("[data-mode]").forEach(x => x.classList.toggle("on", x === b));
 });
+// ---------- phone tabs: Set up / Campsites ----------
+let pane = "side";
+const paneScroll = { side: 0, main: 0 };
+function showPane(p) {
+  if (p === pane) { scrollTo({ top: 0, behavior: "smooth" }); return; }   // tapping the open tab goes back to the top
+  paneScroll[pane] = scrollY; pane = p;
+  const app = document.querySelector(".app");
+  app.classList.toggle("pane-side", p === "side"); app.classList.toggle("pane-main", p === "main");
+  document.querySelectorAll("[data-pane]").forEach(x => x.classList.toggle("on", x.dataset.pane === p));
+  scrollTo(0, paneScroll[p]);
+}
+document.querySelectorAll("[data-pane]").forEach(b => b.onclick = () => showPane(b.dataset.pane));
+
 document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => {
   tab = b.dataset.tab;
   document.querySelectorAll("[data-tab]").forEach(x => x.classList.toggle("on", x === b)); renderLog();

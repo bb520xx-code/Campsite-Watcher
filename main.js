@@ -25,7 +25,7 @@ function showWindow() {
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 1280, height: 860, minWidth: 900, minHeight: 600,
+    width: 1280, height: 860, minWidth: 960, minHeight: 600, // wide enough to keep the side-by-side layout
     title: "Campsite Watcher", backgroundColor: "#dcebf7", icon: path.join(__dirname, "icon.png"),
     // Mac: content runs under the traffic lights. Windows: normal title bar, no File/Edit menu.
     ...(isMac ? { titleBarStyle: "hiddenInset" } : { autoHideMenuBar: true }),
