@@ -1,4 +1,14 @@
 const $ = id => document.getElementById(id);
+
+// iPhone/iPad Safari: suggest adding to the Home Screen (once it's dismissed or installed, stay quiet).
+(() => {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const installed = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+  let dismissed = false; try { dismissed = localStorage.getItem("installHintClosed") === "1"; } catch {}
+  if (!ios || installed || dismissed) return;
+  $("install").hidden = false;
+  $("installClose").onclick = () => { $("install").hidden = true; try { localStorage.setItem("installHintClosed", "1"); } catch {} };
+})();
 let CHECK_MS = (+(() => { try { return localStorage.getItem("interval"); } catch {} })() || 120) * 1000;
 const everyText = () => { const s = CHECK_MS / 1000; return s < 60 ? `every ${s} seconds` : s === 60 ? "every minute" : `every ${s / 60} minutes`; };
 const NEEDS = ["needElectric", "needRV", "needDrive", "skipGroup"];

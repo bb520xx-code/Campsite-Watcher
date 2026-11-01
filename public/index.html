@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Campsite Watcher</title>
 <link rel="icon" href="icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Campsites">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#cfeadb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1b22" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,6 +20,11 @@
 <div class="app">
   <aside class="side">
     <div class="brand"><img src="icon.png" alt=""><span>Campsite Watcher</span></div>
+    <div class="glass install" id="install" hidden>
+      <button type="button" id="installClose" class="suggClose" aria-label="Close" title="Close">✕</button>
+      <b>Put it on your Home Screen</b>
+      <div class="muted small">Tap <svg class="share" viewBox="0 0 20 24" aria-hidden="true"><path d="M10 15V2.5M5.5 7 10 2.5 14.5 7M6.5 10H3.5v11.5h13V10h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> <b>Share</b> in Safari (on newer iPhones it&rsquo;s under <b>&middot;&middot;&middot;</b>), then <b>Add to Home Screen</b>. It opens like an app with its own tent icon.</div>
+    </div>
 
     <section>
       <h3><em>1</em> Find a campground</h3>

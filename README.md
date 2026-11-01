@@ -11,6 +11,8 @@ Also on Hugging Face: https://huggingface.co/spaces/bb520xx-code/Campsite-Watche
 | [**⬇ Download for Windows**](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Windows.zip) | [**⬇ Download for Mac**](https://github.com/bb520xx-code/Campsite-Watcher/releases/latest/download/Campsite-Watcher-Mac.zip) |
 | Windows 10 or 11, 64-bit | Apple chip (M1 or newer) |
 
+**📱 iPhone:** open https://campsite-watcher-vs4b.onrender.com in Safari, tap **Share** (on newer iPhones it's under **···**), then **Add to Home Screen**. It gets its own tent icon and opens full-screen like an app. See [iPhone](#iphone).
+
 First time opening it? See [Desktop app](#desktop-app).
 
 Prefer to build it yourself? [Run it on your computer](#run) or [deploy your own website](#website-version-no-download).
@@ -86,6 +88,16 @@ The desktop app keeps checking even after you close its window, so you don't nee
 2. Drag **Campsite Watcher** into **Applications** and open it.
 3. The app isn't from the App Store, so macOS blocks it the first time. Go to **System Settings → Privacy & Security**, scroll down and click **Open Anyway**.
 4. Closing the window keeps it watching. Click its Dock icon to bring it back, and quit with **Cmd+Q**.
+
+## iPhone
+
+There's no App Store download. Instead, add the website to your Home Screen:
+
+1. Open **https://campsite-watcher-vs4b.onrender.com** in **Safari**.
+2. Tap **Share** (the square with an arrow; on newer iPhones tap **···** first), then **Add to Home Screen**, then **Add**.
+3. Open **Campsites** from your Home Screen. It runs full-screen with its own icon.
+
+iPhones pause apps like this when they're not on screen, so it only checks while it's open. To get alerts while your phone is in your pocket, leave the watch running on a computer (the desktop app is best) with **Send alerts to my phone** turned on, and install the free **ntfy** app on your iPhone.
 
 ## Run
 

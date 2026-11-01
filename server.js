@@ -7,7 +7,8 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const PUBLIC = path.join(__dirname, "public");
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36";
-const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
+const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml",
+  ".png": "image/png", ".json": "application/json", ".webmanifest": "application/manifest+json" };
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 // recreation.gov answers 429 when asked too fast; wait and retry instead of failing.

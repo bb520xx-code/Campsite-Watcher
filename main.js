@@ -33,9 +33,9 @@ function createWindow() {
     webPreferences: { backgroundThrottling: false },
   });
   win.loadURL(`http://localhost:${PORT}`);
-  // The drag strip along the top is only needed for the Mac's hidden title bar.
-  if (!isMac) win.webContents.on("did-finish-load", () =>
-    win.webContents.insertCSS(".side::before,.main::before{display:none!important}"));
+  // Mac: the title bar is hidden, so add a strip along the top to drag the window by.
+  if (isMac) win.webContents.on("did-finish-load", () => win.webContents.insertCSS(
+    '.side::before,.main::before{content:"";position:fixed;top:0;left:0;right:0;height:32px;-webkit-app-region:drag;z-index:5}'));
   win.webContents.setWindowOpenHandler(({ url }) => { shell.openExternal(url); return { action: "deny" }; });
 
   // Closing the window hides it so watching carries on. Quit from the Dock / Cmd+Q on Mac,
